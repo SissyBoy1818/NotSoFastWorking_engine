@@ -2,6 +2,7 @@
 #include "QuadTree.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "Camera.h"
 
@@ -31,13 +32,15 @@ int main()
     nsfw::render::Camera toDraw{{0,0}, {100,100}};
 
     nsfw::utils::QuadTree<drawableObj> tree{camera.getCapturedArea()};
+    std::vector<drawableObj> allObj;
 
-    for (int i = 0; i < 1000; i++) {
-        nsfw::utils::Rectangle r{rand_float(0,800), rand_float(0,800),rand_float(10,50),rand_float(10,50)};
+    for (int i = 0; i < 100000; i++) {
+        nsfw::utils::Rectangle r{rand_float(0,windowSize.x), rand_float(0,windowSize.y), rand_float(2,10),rand_float(2,10)};
         Color c{(unsigned char)(rand() % 255), (unsigned char)(rand() % 255),(unsigned char)(rand() % 255),255};
 
         drawableObj o(r,c);
 
+        allObj.push_back(o);
         tree.insert(o, r);
     }
 
@@ -47,8 +50,13 @@ int main()
         ClearBackground(RAYWHITE);
 
         auto objs = tree.objectsInArea(toDraw.getCapturedArea());
-        for (auto o : objs)
+        for (const auto &o : objs)
             o.draw();
+
+        // for (auto &o : allObj) {
+        //     if (toDraw.getCapturedArea().overlaps(o.rect))
+        //         o.draw();
+        // }
 
         DrawRectangleLines(toDraw.getPosition().x, toDraw.getPosition().y,
                            toDraw.getSize().x, toDraw.getSize().y, BLACK);

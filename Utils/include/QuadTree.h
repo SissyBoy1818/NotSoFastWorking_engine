@@ -2,6 +2,7 @@
 
 #include "Rectangle.h"
 #include <list>
+#include <vector>
 #include <array>
 #include <memory>
 
@@ -21,8 +22,9 @@ public:
     /**
      * \brief Добавляет объект в дерево.
      * \param object Добавляемый в дерево объект
+     * \param objectRect Размер добавляемого объекта
      */
-    void insert(const OBJECT_TYPE object, const Rectangle &objectRect);
+    void insert(const OBJECT_TYPE &object, const Rectangle &objectRect);
 
     /**
      * \brief Метод для поиска всех объектов, находящихся в заданной прямоугольной области
@@ -41,7 +43,7 @@ public:
      * \brief Метод-геттер прямоугольной области дерева
      * \return Область дерева
      */
-    Rectangle rectangle() const;
+    [[nodiscard]] Rectangle rectangle() const;
 
 private:
     Rectangle m_rect; ///< Область дерева
@@ -52,7 +54,7 @@ private:
      */
     struct QuadTreeChild {
         Rectangle rect; ///< Область поддерева
-        std::shared_ptr<QuadTree> ptr; ///< Указатель на поддерево
+        std::shared_ptr<QuadTree<OBJECT_TYPE>> ptr; ///< Указатель на поддерево
     };
 
     /**
@@ -64,7 +66,7 @@ private:
         OBJECT_TYPE object; ///< Сам объект
     };
 
-    std::list<QuadTreeObject> m_objects; ///<  список объектов принадлежащих дереву
+    std::vector<QuadTreeObject> m_objects; ///<  список объектов принадлежащих дереву
     std::array<QuadTreeChild, 4> m_subTrees; ///< статический массив поддеревьев
 
 
@@ -87,13 +89,26 @@ QuadTree<OBJECT_TYPE>::QuadTree(const Rectangle &rect)
     : m_rect(rect)
 {
     // fill m_subTreeRects
+    const auto subTreeSize = m_rect.size / 2;
+
+    m_subTrees[0].rect.position = m_rect.position;
+    m_subTrees[0].rect.size = subTreeSize;
+
+    m_subTrees[1].rect.position = m_rect.position + Vector2f{subTreeSize.x, 0};
+    m_subTrees[1].rect.size = subTreeSize;
+
+    m_subTrees[2].rect.position = m_rect.position + Vector2f{0, subTreeSize.y};
+    m_subTrees[2].rect.size = subTreeSize;
+
+    m_subTrees[3].rect.position = m_rect.position + subTreeSize;
+    m_subTrees[3].rect.size = subTreeSize;
 }
 
 template<class OBJECT_TYPE>
 QuadTree<OBJECT_TYPE>::~QuadTree() = default;
 
 template<class OBJECT_TYPE>
-void QuadTree<OBJECT_TYPE>::insert(OBJECT_TYPE object, const Rectangle &objectRect) {
+void QuadTree<OBJECT_TYPE>::insert(const OBJECT_TYPE &object, const Rectangle &objectRect) {
     for (auto &subTree : m_subTrees) {
         // Проверяем, может ли какое-то из поддеревьев полностью вместить в себя объект
         if (subTree.rect.contains(objectRect)) {
@@ -142,14 +157,14 @@ void QuadTree<OBJECT_TYPE>::find(const Rectangle &area, std::list<OBJECT_TYPE> &
     }
 
     // Иначе, проверяем все объекты в дереве
-    for (auto object: m_objects) {
+    for (const auto &object: m_objects) {
         if (area.overlaps(object.rect))
             result.push_back(object.object);
     }
 
     // И проверяем объекты в поддеревьях
     for (auto &subTree: m_subTrees) {
-        if (area.overlaps(subTree.rect))
+        if (area.overlaps(subTree.rect) && subTree.ptr)
             subTree.ptr->find(area, result);
     }
 }
