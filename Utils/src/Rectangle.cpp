@@ -23,26 +23,19 @@ bool Rectangle::contains(const Vector2f &point) const {
 }
 
 bool Rectangle::contains(const Rectangle &rhs) const {
-    // Если исходный прямоугольник меньше, то он не может содержать другой
-    if (size.x < rhs.size.x || size.y < rhs.size.y)
-        return false;
-    // Если какая-то из граней другого прямоугольника не лежит в пределах исходного
-    if (position.x > rhs.position.x ||
-        position.x+size.x < rhs.position.x+rhs.size.x ||
-        position.y > rhs.position.y ||
-        position.y+size.y < rhs.position.y+rhs.size.y)
-        return false;
-
-    // Иначе
-    return true;
+    // Если все грани другого прямоугольника лежат в пределах исходного
+    return (position.x <= rhs.position.x && rhs.position.x < position.x+size.x &&
+            position.x < rhs.position.x+rhs.size.x && rhs.position.x+rhs.size.x <= position.x+size.x &&
+            position.y <= rhs.position.y && rhs.position.y < position.y+size.y &&
+            position.y < rhs.position.y+rhs.size.y && rhs.position.y+rhs.size.y <= position.y+size.y);
 }
 
 bool Rectangle::overlaps(const Rectangle &rhs) const {
     // Если хотя-бы одна из вершин другого прямоугольника лежит внутри исходного
-    return (contains(rhs.position) ||
-        contains(rhs.position+rhs.size) ||
-        contains({rhs.position.x, rhs.position.y+rhs.size.y}) ||
-        contains({rhs.position.x+rhs.size.x, rhs.position.y}));
+    return (position.x < rhs.position.x + rhs.size.x &&
+            position.x + size.x > rhs.position.x &&
+            position.y < rhs.position.y + rhs.size.y &&
+            position.y + size.y > rhs.position.y);
 }
 
 }

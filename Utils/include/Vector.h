@@ -1,5 +1,7 @@
 #pragma once
 
+#include "raylib.h"
+
 namespace nsfw::utils {
 
 /**
@@ -24,6 +26,8 @@ public:
 
     template<class U>
     float operator*(const Vector2<U> &rhs) const; /// Скалярное произведение векторов
+
+    operator ::Vector2() const;
 
     [[nodiscard]] Vector2<float> normalized() const; /// Метод для получения нормализованного вектора (с длиной 1)
     [[nodiscard]] float length() const; /// Метод для получения длины вектора
@@ -68,6 +72,11 @@ template<class T>
 template<class U>
 float Vector2<T>::operator*(const Vector2<U> &rhs) const {
     return x*rhs.x + y*rhs.y;
+}
+
+template<class T>
+Vector2<T>::operator ::Vector2() const {
+    return ::Vector2{x, y};
 }
 
 template<class T>
