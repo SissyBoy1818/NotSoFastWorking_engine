@@ -44,8 +44,7 @@ int main()
         tree.insert(o, r);
     }
 
-    while (!WindowShouldClose())
-    {
+    while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -53,14 +52,13 @@ int main()
         for (const auto &o : objs)
             o.draw();
 
-        // for (auto &o : allObj) {
-        //     if (toDraw.getCapturedArea().overlaps(o.rect))
-        //         o.draw();
-        // }
-
         DrawRectangleLines(toDraw.getPosition().x, toDraw.getPosition().y,
                            toDraw.getSize().x, toDraw.getSize().y, BLACK);
-        auto key = GetKeyPressed();
+
+        auto [mx, my] = GetMousePosition();
+        toDraw.setPosition({mx,my});
+
+        /*auto key = GetKeyPressed();
         switch (key) {
             case KEY_A:
                 toDraw.move({-10, 0});
@@ -76,7 +74,7 @@ int main()
                 break;
             default:
                 break;
-        }
+        }*/
 
 
         DrawText(std::to_string(GetFPS()).c_str(), 10,10, 15, BLACK);

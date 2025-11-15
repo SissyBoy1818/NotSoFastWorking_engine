@@ -3,11 +3,11 @@
 namespace nsfw::render {
 
 Camera::Camera(const utils::Rectangle &rect)
-    : m_capturedArea(rect)
+    : m_capturedArea(rect.position-rect.size/2, rect.size)
 {}
 
 Camera::Camera(const utils::Vector2f position, const utils::Vector2f area)
-    : m_capturedArea(position, area)
+    : m_capturedArea(position-area/2, area)
 {}
 
 utils::Vector2f Camera::CameraToWorldPosition(const utils::Vector2i point) const {
@@ -25,14 +25,18 @@ void Camera::move(const utils::Vector2f offset) {
 }
 
 void Camera::setPosition(const utils::Vector2f newPosition) {
-    m_capturedArea.position = newPosition;
+    m_capturedArea.position = newPosition - m_capturedArea.size/2;
 }
 
 void Camera::resize(const utils::Vector2f newArea) {
+    auto diff = m_capturedArea.size - newArea;
+    move(diff/2.0f);
     m_capturedArea.size = newArea;
 }
 
 void Camera::zoom(const float factor) {
+    auto diff = m_capturedArea.size * (1 - factor);
+    move(diff/2.0f);
     m_capturedArea.size = m_capturedArea.size * factor;
 }
 
