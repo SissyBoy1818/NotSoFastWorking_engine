@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.11) # FetchContent is available in 3.11+
 project(NotSoFastWorking_engine)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include_directories(Utils/include)
+include_directories(Renderer/include)
 # Dependencies
 set(RAYLIB_VERSION 5.5)
 find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
@@ -23,6 +28,14 @@ endif()
 
 # Our Project
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp
+        Utils/include/QuadTree.h
+        Utils/src/QuadTree.cpp
+        Utils/include/Vector.hpp
+        Utils/include/Rectangle.h
+        Utils/src/Rectangle.cpp
+        Renderer/include/Camera.h
+        Renderer/src/Camera.cpp
+)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
