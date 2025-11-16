@@ -2,31 +2,17 @@
 
 #include "Camera.h"
 #include "Component.h"
-
+#include "TransformComponent.h"
 #include "raylib.h"
 #include <print>
 
 using namespace nsfw;
 
-class TransformComponent : public ecs::Component {
-public:
-    inline TransformComponent(const utils::Rectangle &rect)
-        : m_rect(rect) {
-        std::printf("TransformComponent successfully created\n");
-    }
-
-    inline void FrameUpdate(float dt) override {}
-
-    inline void TickUpdate(float dt) override {}
-
-    utils::Rectangle m_rect;
-};
-
 class Mouse : public ecs::GameObject {
 public:
     inline Mouse() {
         utils::Rectangle r {x,y, 5,5};
-        addComponent<TransformComponent>(r);
+        addComponent<ecs::TransformComponent>(r);
     }
 
     float x = 0;
@@ -34,15 +20,14 @@ public:
 
     inline void FrameUpdate(float dt) override {
         auto [x, y] = GetMousePosition();
-        auto t = std::dynamic_pointer_cast<TransformComponent>(m_components[0]);
-        t->m_rect.position.x = x;
-        t->m_rect.position.y = y;
+        auto t = std::dynamic_pointer_cast<ecs::TransformComponent>(m_components[0]);
+        t->setPosition({x, y});
     }
 };
 
 class FollowingCamera : public ecs::Component {
 public:
-    explicit FollowingCamera(std::shared_ptr<ecs::GameObject>&& owner, std::shared_ptr<ecs::GameObject>&& hunted);
+    explicit FollowingCamera(std::shared_ptr<ecs::GameObject>&& camera, std::shared_ptr<ecs::GameObject>&& hunted);
 
     void FrameUpdate(float dt) override;
 
@@ -50,20 +35,20 @@ public:
 
 private:
     std::shared_ptr<ecs::GameObject> m_toFollow;
-    std::shared_ptr<ecs::GameObject> m_owner;
+    std::shared_ptr<ecs::GameObject> m_camera;
 };
 
-inline FollowingCamera::FollowingCamera(std::shared_ptr<ecs::GameObject>&& owner, std::shared_ptr<ecs::GameObject>&& hunted)
+inline FollowingCamera::FollowingCamera(std::shared_ptr<ecs::GameObject>&& camera, std::shared_ptr<ecs::GameObject>&& hunted)
     : m_toFollow(hunted)
-    , m_owner(owner) {
+    , m_camera(camera) {
     std::printf("FollowingCamera successfully created\n");
 }
 
 inline void FollowingCamera::FrameUpdate(float dt) {
-    auto transform = m_owner->getComponent<TransformComponent>();
-    auto targetPos = m_toFollow->getComponent<TransformComponent>();
+    auto transform = m_camera->getComponent<ecs::TransformComponent>();
+    auto targetPos = m_toFollow->getComponent<ecs::TransformComponent>();
 
-    transform->m_rect.position = targetPos->m_rect.position;
+    transform->setPosition(targetPos->position() - transform->size()/2);
 }
 
 inline void FollowingCamera::TickUpdate(float dt) {

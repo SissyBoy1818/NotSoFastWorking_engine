@@ -32,7 +32,7 @@ public:
      * \return Указатель на компонент
      */
     template<typename T>
-    std::shared_ptr<T> getComponent();
+    std::shared_ptr<T> getComponent() const;
 
 protected:
     std::vector<std::shared_ptr<Component>> m_components;
@@ -57,7 +57,7 @@ void GameObject::addComponent(Args&&... args) {
 }
 
 template<typename T>
-std::shared_ptr<T> GameObject::getComponent() {
+std::shared_ptr<T> GameObject::getComponent() const {
     for (const auto &component : m_components)
         if (auto casted = std::dynamic_pointer_cast<T>(component))
             return casted;

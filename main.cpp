@@ -34,10 +34,10 @@ int main()
     auto toDraw = std::make_shared<nsfw::render::Camera>(r);
     auto mouse = std::make_shared<Mouse>();
 
-    toDraw->addComponent<TransformComponent>(r);
+    toDraw->addComponent<ecs::TransformComponent>(r);
     toDraw->addComponent<FollowingCamera>(toDraw, mouse);
 
-    nsfw::utils::QuadTree<drawableObj> tree{camera.getCapturedArea()};
+    nsfw::utils::QuadTree<drawableObj> tree{camera.getComponent<ecs::TransformComponent>()->rect()};
     std::vector<drawableObj> allObj;
 
     for (int i = 0; i < 100000; i++) {
@@ -54,12 +54,14 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        auto objs = tree.objectsInArea(toDraw->getCapturedArea());
+        auto toDrawRect = toDraw->getComponent<ecs::TransformComponent>()->rect();
+
+        auto objs = tree.objectsInArea(toDrawRect);
         for (const auto &o : objs)
             o.draw();
 
-        DrawRectangleLines(toDraw->getPosition().x, toDraw->getPosition().y,
-                           toDraw->getSize().x, toDraw->getSize().y, BLACK);
+        DrawRectangleLines(toDrawRect.position.x, toDrawRect.position.y,
+                           toDrawRect.size.x, toDrawRect.size.y, BLACK);
 
 
         toDraw->FrameUpdate(GetFrameTime());
