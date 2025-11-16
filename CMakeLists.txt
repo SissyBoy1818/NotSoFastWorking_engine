@@ -20,6 +20,7 @@ FetchContent_Declare(
 
 include_directories(Utils/include)
 include_directories(Renderer/include)
+include_directories(ECS/include)
 
 # Dependencies
 set(RAYLIB_VERSION 5.5)
@@ -54,9 +55,15 @@ set(RENDERER_SOURCES
         Renderer/src/Camera.cpp
 )
 
+set(ECS_SOURCES
+        ECS/include/GameObject.h
+        ECS/include/Component.h
+)
+
 add_executable(${PROJECT_NAME} main.cpp
         ${UTILS_SOURCES}
         ${RENDERER_SOURCES}
+        ${ECS_SOURCES}
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
