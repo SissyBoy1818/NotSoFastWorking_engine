@@ -21,6 +21,7 @@ FetchContent_Declare(
 include_directories(Utils/include)
 include_directories(Renderer/include)
 include_directories(ECS/include)
+include_directories(ECS/Components)
 
 # Dependencies
 set(RAYLIB_VERSION 5.5)
@@ -58,7 +59,7 @@ set(RENDERER_SOURCES
 set(ECS_SOURCES
         ECS/include/GameObject.h
         ECS/include/Component.h
-        ECS/src/GameObject.cpp
+        ECS/Components/TransformComponent.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp
