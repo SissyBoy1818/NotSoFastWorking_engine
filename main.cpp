@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "Examples/FollowingCamera.h"
 #include "Camera.h"
 
 struct drawableObj {
@@ -29,7 +30,12 @@ int main()
     };
 
     nsfw::render::Camera camera{{0,0}, windowSize};
-    nsfw::render::Camera toDraw{{0,0}, {100,100}};
+    nsfw::utils::Rectangle r{{0,0}, {100,100}};
+    auto toDraw = std::make_shared<nsfw::render::Camera>(r);
+    auto mouse = std::make_shared<Mouse>();
+
+    toDraw->addComponent<TransformComponent>(r);
+    toDraw->addComponent<FollowingCamera>(toDraw, mouse);
 
     nsfw::utils::QuadTree<drawableObj> tree{camera.getCapturedArea()};
     std::vector<drawableObj> allObj;
@@ -48,34 +54,16 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        auto objs = tree.objectsInArea(toDraw.getCapturedArea());
+        auto objs = tree.objectsInArea(toDraw->getCapturedArea());
         for (const auto &o : objs)
             o.draw();
 
-        DrawRectangleLines(toDraw.getPosition().x, toDraw.getPosition().y,
-                           toDraw.getSize().x, toDraw.getSize().y, BLACK);
+        DrawRectangleLines(toDraw->getPosition().x, toDraw->getPosition().y,
+                           toDraw->getSize().x, toDraw->getSize().y, BLACK);
 
-        auto [mx, my] = GetMousePosition();
-        toDraw.setPosition({mx,my});
 
-        /*auto key = GetKeyPressed();
-        switch (key) {
-            case KEY_A:
-                toDraw.move({-10, 0});
-                break;
-            case KEY_W:
-                toDraw.move({0, -10});
-                break;
-            case KEY_D:
-                toDraw.move({10, 0});
-                break;
-            case KEY_S:
-                toDraw.move({0, 10});
-                break;
-            default:
-                break;
-        }*/
-
+        toDraw->FrameUpdate(GetFrameTime());
+        mouse->FrameUpdate(GetFrameTime());
 
         DrawText(std::to_string(GetFPS()).c_str(), 10,10, 15, BLACK);
         DrawText(std::to_string(GetFrameTime()).c_str(), 10,30, 15, BLACK);

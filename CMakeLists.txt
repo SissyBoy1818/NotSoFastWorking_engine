@@ -58,12 +58,14 @@ set(RENDERER_SOURCES
 set(ECS_SOURCES
         ECS/include/GameObject.h
         ECS/include/Component.h
+        ECS/src/GameObject.cpp
 )
 
 add_executable(${PROJECT_NAME} main.cpp
         ${UTILS_SOURCES}
         ${RENDERER_SOURCES}
         ${ECS_SOURCES}
+        Examples/FollowingCamera.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
