@@ -2,13 +2,14 @@
 
 #include "raylib.h"
 #include "Rectangle.h"
+#include "GameObject.h"
 
 namespace nsfw::render {
 /**
  * \class Camera
  * \brief Камера для управления видимой областью и преобразования координат между мировым и экранным пространством
  */
-class Camera {
+class Camera : public ecs::GameObject {
 public:
     /**
      * \brief Конструктор класса
@@ -22,6 +23,8 @@ public:
      * \param area Область видимости камеры
      */
     Camera(utils::Vector2f position, utils::Vector2f area);
+
+    void FrameUpdate(float dt) override;
 
     /**
      * \brief Преобразовать координаты камеры в мировые

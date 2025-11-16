@@ -1,14 +1,27 @@
 #include "Camera.h"
 
+#include "../../Examples/FollowingCamera.h"
+
 namespace nsfw::render {
 
 Camera::Camera(const utils::Rectangle &rect)
-    : m_capturedArea(rect.position-rect.size/2, rect.size)
-{}
+    : m_capturedArea(rect.position-rect.size/2, rect.size) {
+    addComponent<TransformComponent>(rect);
+}
 
 Camera::Camera(const utils::Vector2f position, const utils::Vector2f area)
-    : m_capturedArea(position-area/2, area)
-{}
+    : m_capturedArea(position-area/2, area) {
+    utils::Rectangle rect{position, area};
+    addComponent<TransformComponent>(rect);
+}
+
+void Camera::FrameUpdate(float dt) {
+    GameObject::FrameUpdate(dt);
+
+    auto transform = getComponent<TransformComponent>();
+
+    setPosition(transform->m_rect.position);
+}
 
 utils::Vector2f Camera::CameraToWorldPosition(const utils::Vector2i point) const {
     return {static_cast<float>(point.x) + m_capturedArea.position.x,
