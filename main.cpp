@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Examples/FollowingCamera.h"
+#include "PanningCamera.h"
 #include "Camera.h"
 
 struct drawableObj {
@@ -34,8 +35,9 @@ int main()
     auto toDraw = std::make_shared<nsfw::render::Camera>(r);
     auto mouse = std::make_shared<Mouse>();
 
-    toDraw->addComponent<ecs::TransformComponent>(r);
-    toDraw->addComponent<FollowingCamera>(toDraw, mouse);
+    toDraw->addComponent<ecs::PanningCamera>(toDraw);
+
+    //toDraw->addComponent<FollowingCamera>(toDraw, mouse);
 
     nsfw::utils::QuadTree<drawableObj> tree{camera.getComponent<ecs::TransformComponent>()->rect()};
     std::vector<drawableObj> allObj;

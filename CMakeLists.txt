@@ -60,6 +60,7 @@ set(ECS_SOURCES
         ECS/include/GameObject.h
         ECS/include/Component.h
         ECS/Components/TransformComponent.h
+        ECS/Components/PanningCamera.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp

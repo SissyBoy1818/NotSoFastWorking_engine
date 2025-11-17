@@ -17,11 +17,15 @@ public:
     T y;
 
 public:
-    Vector2(T _x, T _y);
-    Vector2();
+    Vector2(T _x = 0, T _y = 0);
+    Vector2(::Vector2 &&vec);
+    Vector2(Vector2<T> &&vec) = default;
+    Vector2(const Vector2<T> &vec) = default;
 
-    Vector2<T> operator+(const Vector2<T> &rhs) const; /// Сложение векторов
-    Vector2<T> operator-(const Vector2<T> &rhs) const; /// Вычитание векторов
+    Vector2<T>&& operator+(const Vector2<T> &rhs) const; /// Сложение векторов
+    void operator+=(const Vector2<T> &rhs); /// Сложение векторов
+    Vector2<T>&& operator-(const Vector2<T> &rhs) const; /// Вычитание векторов
+    void operator-=(const Vector2<T> &rhs); /// Вычитание векторов
 
     auto operator*(auto rhs) const; /// Умножение вектора на число
     template <typename Rhs> requires std::is_arithmetic_v<T>
@@ -29,6 +33,10 @@ public:
 
     template<class U> requires std::is_arithmetic_v<T>
     float operator*(const Vector2<U> &rhs) const; /// Скалярное произведение векторов
+
+    Vector2<T>& operator=(const ::Vector2 &rhs);
+    Vector2<T>& operator=(const Vector2<T> &rhs) = default;
+    Vector2<T>& operator=(Vector2<T> &&rhs) = default;
 
     operator ::Vector2() const;
 
@@ -43,21 +51,31 @@ using Vector2f = Vector2<float>;
 
 template<class T> requires std::is_arithmetic_v<T>
 Vector2<T>::Vector2(T _x, T _y)
-    : x(_x), y(_y)
-{}
+    : x(_x), y(_y) {}
 
 template<class T> requires std::is_arithmetic_v<T>
-Vector2<T>::Vector2()
-    : x(0), y(0)
-{}
+Vector2<T>::Vector2(::Vector2 &&vec)
+    : x(vec.x), y(vec.y) {}
 
 template<class T> requires std::is_arithmetic_v<T>
-Vector2<T> Vector2<T>::operator+(const Vector2<T> &rhs) const {
+Vector2<T>&& Vector2<T>::operator+(const Vector2<T> &rhs) const {
     return {x + rhs.x, y + rhs.y};
 }
 
 template<class T> requires std::is_arithmetic_v<T>
-Vector2<T> Vector2<T>::operator-(const Vector2<T> &rhs) const {
+void Vector2<T>::operator+=(const Vector2<T> &rhs) {
+    x += rhs.x;
+    y += rhs.y;
+}
+
+template<class T> requires std::is_arithmetic_v<T>
+void Vector2<T>::operator-=(const Vector2<T> &rhs) {
+    x -= rhs.x;
+    y -= rhs.y;
+}
+
+template<class T> requires std::is_arithmetic_v<T>
+Vector2<T>&& Vector2<T>::operator-(const Vector2<T> &rhs) const {
     return {x - rhs.x, y - rhs.y};
 }
 
@@ -80,6 +98,13 @@ template<class T> requires std::is_arithmetic_v<T>
 template<class U> requires std::is_arithmetic_v<T>
 float Vector2<T>::operator*(const Vector2<U> &rhs) const {
     return x*rhs.x + y*rhs.y;
+}
+
+template<class T> requires std::is_arithmetic_v<T>
+Vector2<T>& Vector2<T>::operator=(const ::Vector2 &rhs) {
+    x = rhs.x;
+    y = rhs.y;
+    return *this;
 }
 
 template<class T> requires std::is_arithmetic_v<T>
