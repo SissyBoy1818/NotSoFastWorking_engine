@@ -22,17 +22,24 @@ public:
     Vector2(Vector2<T> &&vec) = default;
     Vector2(const Vector2<T> &vec) = default;
 
-    Vector2<T>&& operator+(const Vector2<T> &rhs) const; /// Сложение векторов
-    void operator+=(const Vector2<T> &rhs); /// Сложение векторов
-    Vector2<T>&& operator-(const Vector2<T> &rhs) const; /// Вычитание векторов
-    void operator-=(const Vector2<T> &rhs); /// Вычитание векторов
+    /// Сложение векторов
+    Vector2<T>&& operator+(const Vector2<T> &rhs) const;
+    /// Сложение векторов
+    void operator+=(const Vector2<T> &rhs);
+    /// Вычитание векторов
+    Vector2<T>&& operator-(const Vector2<T> &rhs) const;
+    /// Вычитание векторов
+    void operator-=(const Vector2<T> &rhs);
 
-    auto operator*(auto rhs) const; /// Умножение вектора на число
+    /// Умножение вектора на число
+    auto operator*(auto rhs) const;
+    /// Деление вектора на число
     template <typename Rhs> requires std::is_arithmetic_v<T>
-    auto operator/(Rhs rhs) const; /// Деление вектора на число
+    auto operator/(Rhs rhs) const;
 
+    /// Скалярное произведение векторов
     template<class U> requires std::is_arithmetic_v<T>
-    float operator*(const Vector2<U> &rhs) const; /// Скалярное произведение векторов
+    float operator*(const Vector2<U> &rhs) const;
 
     Vector2<T>& operator=(const ::Vector2 &rhs);
     Vector2<T>& operator=(const Vector2<T> &rhs) = default;
@@ -40,8 +47,10 @@ public:
 
     operator ::Vector2() const;
 
-    [[nodiscard]] Vector2<float> normalized() const; /// Метод для получения нормализованного вектора (с длиной 1)
-    [[nodiscard]] float length() const; /// Метод для получения длины вектора
+    /// Метод для получения нормализованного вектора (с длиной 1)
+    [[nodiscard]] Vector2<float> normalized() const;
+    /// Метод для получения длины вектора
+    [[nodiscard]] float length() const;
 };
 
 using Vector2i = Vector2<int>;

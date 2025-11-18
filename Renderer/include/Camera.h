@@ -39,12 +39,6 @@ public:
     [[nodiscard]] utils::Vector2i WorldToCameraPosition(utils::Vector2f point) const;
 
     /**
-     * \brief Изменить область видимости камеры в factor раз
-     * \param factor Коэффициент изменения
-     */
-    void zoom(float factor);
-
-    /**
      * \brief Оператор для приведения камеры к типу, используемому в raylib
      */
     explicit operator Camera2D() const;

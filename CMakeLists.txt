@@ -22,6 +22,7 @@ include_directories(Utils/include)
 include_directories(Renderer/include)
 include_directories(ECS/include)
 include_directories(ECS/Components)
+include_directories(Engine/include)
 
 # Dependencies
 set(RAYLIB_VERSION 5.5)
@@ -61,6 +62,7 @@ set(ECS_SOURCES
         ECS/include/Component.h
         ECS/Components/TransformComponent.h
         ECS/Components/PanningCamera.h
+        ECS/Components/ZoomingCamera.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp
@@ -68,6 +70,8 @@ add_executable(${PROJECT_NAME} main.cpp
         ${RENDERER_SOURCES}
         ${ECS_SOURCES}
         Examples/FollowingCamera.h
+        Engine/include/Engine.h
+        Engine/src/Engine.cpp
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

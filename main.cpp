@@ -6,7 +6,9 @@
 
 #include "Examples/FollowingCamera.h"
 #include "PanningCamera.h"
+#include "ZoomingCamera.h"
 #include "Camera.h"
+#include "Engine.h"
 
 struct drawableObj {
     nsfw::utils::Rectangle rect;
@@ -30,20 +32,20 @@ int main()
         return static_cast<float>(rand())/static_cast<float>(RAND_MAX) * (end - beg) + beg;
     };
 
-    nsfw::render::Camera camera{{0,0}, windowSize};
-    nsfw::utils::Rectangle r{{0,0}, {100,100}};
+    nsfw::utils::Rectangle objsArea{0,0, 8000, 4500};
+    //nsfw::render::Camera camera{{0,0}, windowSize};
+    nsfw::utils::Rectangle r{{0,0}, windowSize};
     auto toDraw = std::make_shared<nsfw::render::Camera>(r);
     auto mouse = std::make_shared<Mouse>();
 
     toDraw->addComponent<ecs::PanningCamera>(toDraw);
+    toDraw->addComponent<ecs::ZoomingCamera>(toDraw);
 
-    //toDraw->addComponent<FollowingCamera>(toDraw, mouse);
-
-    nsfw::utils::QuadTree<drawableObj> tree{camera.getComponent<ecs::TransformComponent>()->rect()};
+    nsfw::utils::QuadTree<drawableObj> tree{objsArea};
     std::vector<drawableObj> allObj;
 
     for (int i = 0; i < 100000; i++) {
-        nsfw::utils::Rectangle r{rand_float(0,windowSize.x), rand_float(0,windowSize.y), rand_float(2,10),rand_float(2,10)};
+        nsfw::utils::Rectangle r{rand_float(0,objsArea.size.x), rand_float(0,objsArea.size.y), rand_float(2,10),rand_float(2,10)};
         Color c{(unsigned char)(rand() % 255), (unsigned char)(rand() % 255),(unsigned char)(rand() % 255),255};
 
         drawableObj o(r,c);
@@ -57,14 +59,14 @@ int main()
         ClearBackground(RAYWHITE);
 
         auto toDrawRect = toDraw->getComponent<ecs::TransformComponent>()->rect();
+        toDrawRect.size.x /= toDraw->getComponent<ecs::TransformComponent>()->scale().x;
+        toDrawRect.size.y /= toDraw->getComponent<ecs::TransformComponent>()->scale().y;
 
         auto objs = tree.objectsInArea(toDrawRect);
-        for (const auto &o : objs)
+        for (auto o : objs) {
+            o.rect.position = toDraw->WorldToCameraPosition(o.rect.position);
             o.draw();
-
-        DrawRectangleLines(toDrawRect.position.x, toDrawRect.position.y,
-                           toDrawRect.size.x, toDrawRect.size.y, BLACK);
-
+        }
 
         toDraw->FrameUpdate(GetFrameTime());
         mouse->FrameUpdate(GetFrameTime());

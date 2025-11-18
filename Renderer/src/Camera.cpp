@@ -14,26 +14,21 @@ Camera::Camera(const utils::Vector2f position, const utils::Vector2f area) {
 }
 
 utils::Vector2f Camera::CameraToWorldPosition(const utils::Vector2i point) const {
-    const auto position = getComponent<ecs::TransformComponent>()->position();
+    const auto &transform = getComponent<ecs::TransformComponent>();
+    const auto position = transform->position();
+    const auto scale = transform->scale();
 
-    return {static_cast<float>(point.x) + position.x,
-            static_cast<float>(point.y) + position.y};
+    return {static_cast<float>(point.x) / scale.x + position.x,
+            static_cast<float>(point.y) / scale.y + position.y};
 }
 
 utils::Vector2i Camera::WorldToCameraPosition(const utils::Vector2f point) const {
-    const auto position = getComponent<ecs::TransformComponent>()->position();
+    const auto &transform = getComponent<ecs::TransformComponent>();
+    const auto position = transform->position();
+    const auto scale = transform->scale();
 
-    return {static_cast<int>(point.x) - static_cast<int>(position.x),
-            static_cast<int>(point.y) - static_cast<int>(position.y)};
-}
-
-void Camera::zoom(const float factor) {
-    auto transform = getComponent<ecs::TransformComponent>();
-    auto size = transform->size();
-
-    auto diff = size * (1 - factor);
-    transform->move(diff/2.0f);
-    size = size * factor;
+    return {static_cast<int>((point.x - position.x) * scale.x),
+            static_cast<int>((point.y - position.y) * scale.y)};
 }
 
 Camera::operator Camera2D() const {

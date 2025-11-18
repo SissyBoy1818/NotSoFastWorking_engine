@@ -5,7 +5,6 @@
 #include "Vector.h"
 #include "raylib.h"
 #include "TransformComponent.h"
-#include "print"
 
 namespace nsfw::ecs {
 
@@ -58,11 +57,11 @@ inline void PanningCamera::ProcessPanning() {
     auto transform = m_camera->getComponent<TransformComponent>();
     utils::Vector2f mousePos(GetMousePosition());
     auto newPos = m_pannedPosition - mousePos;
-    m_pannedPosition = mousePos;
-    std::printf("Panned to: (%f, %f) ", m_pannedPosition.x, m_pannedPosition.y);
-    std::printf("mousePos: (%f, %f)\n", mousePos.x, mousePos.y);
-
+    newPos.x /= transform->scale().x;
+    newPos.y /= transform->scale().y;
     transform->move(newPos);
+
+    m_pannedPosition = mousePos;
 }
 
 }
