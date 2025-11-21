@@ -21,7 +21,7 @@ enum class ComponentLookupError {
 class ComponentManager {
 public:
     template <typename COMPONENT_TYPE>
-    void addComponent(COMPONENT_TYPE component);
+    void addComponent(Entity entity, const COMPONENT_TYPE &component);
 
     template <typename... COMPONENT_TYPES>
     std::vector<Entity> getEntitiesWith();
@@ -35,18 +35,17 @@ private:
 
 // Реализация
 
-template<typename COMPONENT_TYPE>
-void ComponentManager::addComponent(COMPONENT_TYPE component) {
+template <typename COMPONENT_TYPE>
+void ComponentManager::addComponent(const Entity entity, const COMPONENT_TYPE &component) {
     auto it = m_componentArrays.find(typeid(COMPONENT_TYPE));
 
     if (it == m_componentArrays.cend())
-        return;
+        it = m_componentArrays.emplace(typeid(COMPONENT_TYPE), std::make_shared<ComponentArray<COMPONENT_TYPE>>()).first;
 
-    auto array = std::dynamic_pointer_cast<ComponentArray<COMPONENT_TYPE>>(it->second);
-    if (!array)
-        return;
+    auto array = std::static_pointer_cast<ComponentArray<COMPONENT_TYPE>>(it->second);
 
-    array->data().insert(component);
+    array->entities().push_back(entity);
+    array->components().emplace_back(component);
 }
 
 template<typename... COMPONENT_TYPES>
@@ -57,7 +56,6 @@ std::vector<Entity> ComponentManager::getEntitiesWith() {
     std::vector<Entity> result;
     bool first = true;
 
-    // Лямбда для обработки каждого типа компонента
     auto processComponent = [&]<typename T>() {
         const auto it = m_componentArrays.find(typeid(T));
         if (it == m_componentArrays.end()) {
@@ -65,19 +63,16 @@ std::vector<Entity> ComponentManager::getEntitiesWith() {
             return;
         }
 
-        std::shared_ptr<ComponentArray<T>> components = std::dynamic_pointer_cast<ComponentArray<T>>(it->second);
-        if (!components) {
+        auto components = std::dynamic_pointer_cast<ComponentArray<T>>(it->second);
+        if (!components)
             throw std::runtime_error("Failed to cast component array");
-        }
 
         auto& entities = components->entities();
 
         if (first) {
-            // Первый компонент - просто копируем
             result.insert(result.end(), entities.begin(), entities.end());
             first = false;
         } else {
-            // Остальные - находим пересечение
             std::vector<Entity> intersection;
             std::set_intersection(
                 result.begin(), result.end(),
@@ -88,7 +83,6 @@ std::vector<Entity> ComponentManager::getEntitiesWith() {
         }
     };
 
-    // Применяем лямбду к каждому типу
     (processComponent.template operator()<COMPONENT_TYPES>(), ...);
 
     return result;

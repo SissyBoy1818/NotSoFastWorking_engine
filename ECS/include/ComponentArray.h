@@ -18,7 +18,7 @@ public:
     ComponentArray() = default;
     ~ComponentArray() override {};
 
-    void addEntity(Entity entity, COMPONENT_TYPE component) {
+    void addEntity(const Entity entity, const COMPONENT_TYPE &component) {
         m_components.push_back(component);
         m_entities.push_back(entity);
         // maybe sort

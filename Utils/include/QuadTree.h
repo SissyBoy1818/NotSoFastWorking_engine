@@ -16,7 +16,7 @@ namespace nsfw::utils {
 template <class OBJECT_TYPE>
 class QuadTree {
 public:
-    explicit QuadTree(const Rectangle &rect);
+    QuadTree(const Rectangle &rect);
     ~QuadTree();
 
     /**

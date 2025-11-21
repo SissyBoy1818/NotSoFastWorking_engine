@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11) # FetchContent is available in 3.11+
 project(NotSoFastWorking_engine)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # Generate compile_commands.json
@@ -19,9 +19,9 @@ FetchContent_Declare(
 )
 
 include_directories(Utils/include)
-include_directories(Renderer/include)
+include_directories(Render/include)
 include_directories(ECS/include)
-include_directories(ECS/Components)
+include_directories(ECS/Systems)
 include_directories(Engine/include)
 
 # Dependencies
@@ -48,28 +48,33 @@ set(UTILS_SOURCES
         Utils/include/Vector.h
         Utils/include/Rectangle.h
         Utils/src/Rectangle.cpp
-        Renderer/include/Camera.h
-        Renderer/src/Camera.cpp
+        Render/include/Camera.h
+        Render/src/Camera.cpp
 )
 
 set(RENDERER_SOURCES
-        Renderer/include/Camera.h
-        Renderer/src/Camera.cpp
+        Render/include/Camera.h
+        Render/src/Camera.cpp
+        Render/include/Renderer.h
 )
 
 set(ECS_SOURCES
-        ECS/include/GameObject.h
-        ECS/include/Component.h
-        ECS/Components/TransformComponent.h
-        ECS/Components/PanningCamera.h
-        ECS/Components/ZoomingCamera.h
+        ECS/include/CoreComponents.h
+        ECS/include/System.h
+        ECS/include/EntityManager.h
+        ECS/include/ComponentArray.h
+        ECS/src/EntityManager.cpp
+        ECS/include/SystemManager.h
+        ECS/Systems/PanningSystem.h
+        ECS/include/ComponentManager.h
+        ECS/Systems/DrawableSystem.h
+        ECS/Systems/ZoomingSystem.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp
         ${UTILS_SOURCES}
         ${RENDERER_SOURCES}
         ${ECS_SOURCES}
-        Examples/FollowingCamera.h
         Engine/include/Engine.h
         Engine/src/Engine.cpp
 )
@@ -91,7 +96,7 @@ add_executable(tests
 
 target_include_directories(tests PRIVATE
         Utils/include
-        Renderer/include
+        Render/include
 )
 
 target_link_libraries(tests

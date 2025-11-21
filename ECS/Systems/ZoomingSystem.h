@@ -2,7 +2,6 @@
 
 #include "System.h"
 #include "CoreComponents.h"
-#include "ZoomingCamera.h"
 
 namespace nsfw::ecs {
 
