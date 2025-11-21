@@ -1,30 +1,39 @@
 #pragma once
 
 #include <string>
-#include "GameObject.h"
-#include "Camera.h"
+#include "SystemManager.h"
+#include "EntityManager.h"
 
 namespace nsfw::engine {
 
+struct EngineConfig {
+    int width, height;
+    std::string title;
+};
+
 class Engine {
 public:
-    Engine(int width, int height, const std::string &title);
+    explicit Engine(const EngineConfig &config);
     ~Engine();
 
-    void run() const;
+    void run();
+    void pause();
+    void resume();
 
-    void updateObjects() const;
+    void updateObjects(float dt);
 
-    void processPhysics() const;
+    template <typename SYSTEM_TYPE, typename... Args>
+    SYSTEM_TYPE* registerSystem(Args&&... args);
 
-    void render() const;
+    void addGameObject(ecs::Entity entity);
 
-    void addGameObject(const ecs::GameObject &object);
+    template<typename COMPONENT_TYPE>
+    void addComponent(ecs::Entity entity, COMPONENT_TYPE component);
 
 private:
-    std::vector<ecs::GameObject> m_gameObjects;
-    std::shared_ptr<render::Camera> m_camera;
-
+    ecs::SystemManager m_systemManager;
+    ecs::EntityManager m_entityManager;
+    ecs::ComponentManager m_componentManager;
 };
 
 }

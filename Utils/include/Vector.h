@@ -23,11 +23,11 @@ public:
     Vector2(const Vector2<T> &vec) = default;
 
     /// Сложение векторов
-    Vector2<T>&& operator+(const Vector2<T> &rhs) const;
+    Vector2<T> operator+(const Vector2<T> &rhs) const;
     /// Сложение векторов
     void operator+=(const Vector2<T> &rhs);
     /// Вычитание векторов
-    Vector2<T>&& operator-(const Vector2<T> &rhs) const;
+    Vector2<T> operator-(const Vector2<T> &rhs) const;
     /// Вычитание векторов
     void operator-=(const Vector2<T> &rhs);
 
@@ -67,7 +67,7 @@ Vector2<T>::Vector2(::Vector2 &&vec)
     : x(vec.x), y(vec.y) {}
 
 template<class T> requires std::is_arithmetic_v<T>
-Vector2<T>&& Vector2<T>::operator+(const Vector2<T> &rhs) const {
+Vector2<T> Vector2<T>::operator+(const Vector2<T> &rhs) const {
     return {x + rhs.x, y + rhs.y};
 }
 
@@ -84,7 +84,7 @@ void Vector2<T>::operator-=(const Vector2<T> &rhs) {
 }
 
 template<class T> requires std::is_arithmetic_v<T>
-Vector2<T>&& Vector2<T>::operator-(const Vector2<T> &rhs) const {
+Vector2<T> Vector2<T>::operator-(const Vector2<T> &rhs) const {
     return {x - rhs.x, y - rhs.y};
 }
 
