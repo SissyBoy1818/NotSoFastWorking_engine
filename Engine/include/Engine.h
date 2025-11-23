@@ -1,12 +1,15 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 #include <utility>
 #include "System.h"
 #include "SystemManager.h"
 #include "EntityManager.h"
+#include "Layer.h"
+#include "Renderer.h"
 
-namespace nsfw::engine {
+namespace nsfw::core {
 
 struct EngineConfig {
     int width, height;
@@ -25,34 +28,18 @@ public:
 
     void gameLoop();
 
-    template <std::derived_from<ecs::System> SYSTEM_TYPE, typename... Args>
-    void registerSystem(Args&&... args);
-
-    ecs::Entity createEntity();
-
-    template<typename COMPONENT_TYPE>
-    void addComponent(ecs::Entity entity, COMPONENT_TYPE component);
-
 private:
-    ecs::SystemManager m_systemManager;
-    ecs::EntityManager m_entityManager;
-    ecs::ComponentManager m_componentManager;
+    std::vector<Level> m_levels;
+    render::Renderer m_renderer;
+
     bool m_isRunning = true;
 
+    using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+    TimePoint m_lastTime = std::chrono::steady_clock::now();
+    float m_deltaTime = 0;
+
 private:
-    void updateObjects(float dt);
+    void updateTimers();
 };
-
-// Реализация
-
-template<std::derived_from<ecs::System> SYSTEM_TYPE, typename ... Args>
-void Engine::registerSystem(Args &&...args) {
-    m_systemManager.registerSystem<SYSTEM_TYPE>(std::make_shared<SYSTEM_TYPE>(args)...);
-}
-
-template<typename COMPONENT_TYPE>
-void Engine::addComponent(ecs::Entity entity, COMPONENT_TYPE component) {
-    m_componentManager.addComponent(entity, component);
-}
 
 }

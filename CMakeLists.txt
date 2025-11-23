@@ -82,6 +82,7 @@ set(ENGINE_SOURCES
         Engine/include/Event.h
         Engine/include/InputEvents.h
         Engine/include/WindowEvents.h
+        Engine/include/Level.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp
