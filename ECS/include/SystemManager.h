@@ -10,12 +10,32 @@ class SystemManager {
 public:
     SystemManager() = default;
 
-    void registerSystem(std::shared_ptr<System> system);
+    template <std::derived_from<System> SYSTEM_TYPE, typename... Args>
+    void registerSystem(Args&&... args);
 
-    void runSystems();
+    template <std::derived_from<System> SYSTEM_TYPE>
+    void removeSystem();
+
+    auto & getSystems();
 
 private:
     std::unordered_map<std::type_index, std::shared_ptr<System>> m_systems;
 };
+
+// Реализация
+
+template<std::derived_from<System> SYSTEM_TYPE, typename ... Args>
+void SystemManager::registerSystem(Args &&...args) {
+    m_systems[typeid(SYSTEM_TYPE)] = std::make_shared<System>(std::forward<Args>(args)...);
+}
+
+template<std::derived_from<System> SYSTEM_TYPE>
+void SystemManager::removeSystem() {
+    m_systems[typeid(SYSTEM_TYPE)].reset();
+}
+
+inline auto & SystemManager::getSystems() {
+    return m_systems;
+}
 
 }

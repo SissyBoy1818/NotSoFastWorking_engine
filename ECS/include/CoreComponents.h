@@ -5,7 +5,6 @@
 namespace nsfw::ecs {
 
 using TextureID = uint32_t;
-
 using Entity = uint32_t;
 
 struct Transform {
