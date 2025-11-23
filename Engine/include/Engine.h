@@ -3,10 +3,7 @@
 #include <string>
 #include <chrono>
 #include <utility>
-#include "System.h"
-#include "SystemManager.h"
-#include "EntityManager.h"
-#include "Layer.h"
+#include "Level.h"
 #include "Renderer.h"
 
 namespace nsfw::core {
@@ -40,6 +37,7 @@ private:
 
 private:
     void updateTimers();
+    bool handleEvent(Event &e);
 };
 
 }

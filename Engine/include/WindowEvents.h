@@ -15,7 +15,7 @@ public:
 
 class WindowResizedEvent final : public Event {
 public:
-    WindowResizedEvent(const utils::Vector2f windowSize) : m_windowSize(windowSize) {};
+    WindowResizedEvent(const utils::Vector2i windowSize) : m_windowSize(windowSize) {};
 
     [[nodiscard]] std::string toString() const override {
         return std::format("WindowResizedEvent: {}, {}", m_windowSize.x, m_windowSize.y);
@@ -24,7 +24,7 @@ public:
     EVENT_CLASS_TYPE(WindowResize)
 
 private:
-    utils::Vector2f m_windowSize;
+    utils::Vector2i m_windowSize;
 };
 
 }

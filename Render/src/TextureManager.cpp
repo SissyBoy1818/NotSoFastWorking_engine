@@ -12,12 +12,12 @@ TextureID TextureManager::loadTexture(const std::string &filePath) {
     return texture.id;
 }
 
-void TextureManager::unloadTexture(TextureID id) {
+void TextureManager::unloadTexture(const TextureID id) {
     if (m_textures.contains(id))
         UnloadTexture(m_textures[id]);
 }
 
-std::expected<Texture2D, TextureError> TextureManager::getTexture(TextureID id) {
+std::expected<Texture2D, TextureError> TextureManager::getTexture(const TextureID id) {
     if (m_textures.contains(id))
         return m_textures[id];
 

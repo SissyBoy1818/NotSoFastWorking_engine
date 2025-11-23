@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Layer.h"
 #include "EntityManager.h"
 #include "SystemManager.h"
 #include "ComponentManager.h"
@@ -9,8 +10,7 @@ namespace nsfw::core {
 class Level {
 public:
     Level() = default;
-
-    [[nodiscard]] Entity createEntity();
+    ~Level() = default;
 
     template <std::derived_from<ecs::System> SYSTEM_TYPE, typename... Args>
     void registerSystem(Args&&... args);
@@ -25,6 +25,10 @@ public:
     LAYER_TYPE * getLayer() const;
 
     void update(float dt);
+
+    [[nodiscard]] ecs::EntityManager & getEntityManager();
+
+    void onEvent(Event & event);
 
 private:
     ecs::SystemManager m_systemManager;
@@ -47,12 +51,12 @@ void Level::addComponent(ecs::Entity entity, COMPONENT_TYPE component) {
 }
 
 template<std::derived_from<Layer> LAYER_TYPE>
-void Engine::pushLayer() {
+void Level::pushLayer() {
     m_layerStack.push_back(std::make_unique<LAYER_TYPE>());
 }
 
 template<std::derived_from<Layer> LAYER_TYPE>
-LAYER_TYPE * Engine::getLayer() const {
+LAYER_TYPE * Level::getLayer() const {
     for (const auto &layer : m_layerStack) {
         if (auto casted = dynamic_cast<LAYER_TYPE*>(layer.get()))
             return casted;
