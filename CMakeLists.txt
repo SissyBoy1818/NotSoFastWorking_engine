@@ -56,6 +56,7 @@ set(RENDERER_SOURCES
         Render/include/Camera.h
         Render/src/Camera.cpp
         Render/include/Renderer.h
+        Render/src/Renderer.cpp
 )
 
 set(ECS_SOURCES
