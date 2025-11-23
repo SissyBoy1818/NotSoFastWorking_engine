@@ -57,6 +57,8 @@ set(RENDERER_SOURCES
         Render/src/Camera.cpp
         Render/include/Renderer.h
         Render/src/Renderer.cpp
+        Render/include/TextureManager.h
+        Render/src/TextureManager.cpp
 )
 
 set(ECS_SOURCES
@@ -70,6 +72,7 @@ set(ECS_SOURCES
         ECS/include/ComponentManager.h
         ECS/Systems/DrawableSystem.h
         ECS/Systems/ZoomingSystem.h
+        ECS/include/Entity.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp

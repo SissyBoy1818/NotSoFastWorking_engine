@@ -11,6 +11,7 @@ Renderer::~Renderer() = default;
 void Renderer::addTask(const ecs::Transform &transform, const ecs::Drawable &drawable) {
     RenderTask task;
     task.position = transform.rectangle.position;
+    task.rotation = transform.rotation;
     task.scale = transform.scale;
     task.texture_id = drawable.texture;
 
@@ -20,8 +21,8 @@ void Renderer::addTask(const ecs::Transform &transform, const ecs::Drawable &dra
 void Renderer::renderAll() {
     BeginDrawing();
 
-    for (const auto & task: m_renderQueue)
-        DrawTextureEx(m_textureManager.getTexture(task.texture_id), task.position, task.rotation, task.scale, {0,0,0,0});
+    for (const auto &[position, rotation, scale, texture_id]: m_renderQueue)
+        DrawTextureEx(*m_textureManager.getTexture(texture_id), position, rotation, scale, {0,0,0,0});
 
     EndDrawing();
 

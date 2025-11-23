@@ -2,10 +2,9 @@
 
 #include <vector>
 #include <queue>
+#include "Entity.h"
 
 namespace nsfw::ecs {
-
-using Entity = uint32_t;
 
 class EntityManager {
 public:

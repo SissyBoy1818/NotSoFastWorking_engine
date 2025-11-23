@@ -2,13 +2,15 @@
 
 #include <vector>
 #include "CoreComponents.h"
+#include "TextureManager.h"
 
 namespace nsfw::render {
 
 struct RenderTask {
     utils::Vector2f position;
+    float rotation;
     float scale;
-    ecs::TextureID texture_id;
+    TextureID texture_id;
 };
 
 class Renderer {
