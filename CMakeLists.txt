@@ -75,12 +75,20 @@ set(ECS_SOURCES
         ECS/include/Entity.h
 )
 
+set(ENGINE_SOURCES
+        Engine/include/Engine.h
+        Engine/src/Engine.cpp
+        Engine/include/Layer.h
+        Engine/include/Event.h
+        Engine/include/InputEvents.h
+        Engine/include/WindowEvents.h
+)
+
 add_executable(${PROJECT_NAME} main.cpp
         ${UTILS_SOURCES}
         ${RENDERER_SOURCES}
         ${ECS_SOURCES}
-        Engine/include/Engine.h
-        Engine/src/Engine.cpp
+        ${ENGINE_SOURCES}
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
