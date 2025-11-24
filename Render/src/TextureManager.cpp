@@ -6,8 +6,12 @@ TextureManager::TextureManager() = default;
 
 TextureManager::~TextureManager() = default;
 
-TextureID TextureManager::loadTexture(const std::string &filePath) {
-    const auto texture = LoadTexture(filePath.c_str());
+TextureID TextureManager::loadTexture(const std::string &filePath, utils::Vector2f size) {
+    auto image = LoadImage(filePath.c_str());
+    ImageResize(&image, size.x, size.y);
+
+    const auto texture = LoadTextureFromImage(image);
+    UnloadImage(image);
     m_textures[texture.id] = texture;
     return texture.id;
 }

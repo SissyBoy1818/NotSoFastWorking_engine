@@ -20,13 +20,35 @@ private:
 
 
 inline void DrawableSystem::FrameUpdate(ComponentManager &cm, float dt) {
-    for (auto entity : cm.getEntitiesWith<Drawable, Transform>()) {
+    std::expected<Transform *, ComponentLookupError> cameraExp;
+    for (const auto entity : cm.getEntitiesWith<CameraComponent>()) {
+       cameraExp = cm.getComponent<Transform>(entity);
+        if (cameraExp.has_value())
+            break;
+    }
+
+    if (!cameraExp.has_value())
+        return;
+    const auto cameraTransform = *cameraExp.value();
+
+    // Вычисляем видимую область камеры в мировых координатах с учетом масштаба
+    utils::Rectangle cameraViewRect;
+    cameraViewRect.position = cameraTransform.rectangle.position;
+    cameraViewRect.size = cameraTransform.rectangle.size / cameraTransform.scale;
+
+    for (const auto entity : cm.getEntitiesWith<Drawable, Transform>()) {
         auto drawable = cm.getComponent<Drawable>(entity);
         auto transform = cm.getComponent<Transform>(entity);
         if (!drawable.has_value() || !transform.has_value())
             continue;
 
-        m_renderer.addTask(*transform, *drawable);
+        if (cameraViewRect.overlaps(transform.value()->rectangle)) {
+            Transform tr;
+            tr.rectangle = transform.value()->rectangle;
+            tr.rectangle.position = render::WorldToCameraPosition(cameraTransform, tr.rectangle.position);
+            tr.rectangle.size = tr.rectangle.size * cameraTransform.scale;
+            m_renderer.addTask(transform.value()->rectangle.size, tr, *drawable.value());
+        }
     }
 }
 

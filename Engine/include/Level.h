@@ -12,7 +12,7 @@ public:
     Level() = default;
     ~Level() = default;
 
-    template <std::derived_from<ecs::System> SYSTEM_TYPE, typename... Args>
+    template<std::derived_from<ecs::System> SYSTEM_TYPE, typename ... Args>
     void registerSystem(Args&&... args);
 
     template<typename COMPONENT_TYPE>
@@ -42,7 +42,7 @@ private:
 
 template<std::derived_from<ecs::System> SYSTEM_TYPE, typename ... Args>
 void Level::registerSystem(Args &&...args) {
-    m_systemManager.registerSystem<SYSTEM_TYPE>(std::make_shared<SYSTEM_TYPE>(args)...);
+    m_systemManager.registerSystem<SYSTEM_TYPE>(std::forward<Args>(args)...);
 }
 
 template<typename COMPONENT_TYPE>

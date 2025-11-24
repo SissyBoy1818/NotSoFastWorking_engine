@@ -27,7 +27,7 @@ public:
     std::vector<Entity> getEntitiesWith();
 
     template <typename COMPONENT_TYPE>
-    std::expected<COMPONENT_TYPE, ComponentLookupError> getComponent(Entity entity);
+    std::expected<COMPONENT_TYPE *, ComponentLookupError> getComponent(Entity entity);
 
 private:
     std::unordered_map<std::type_index, std::shared_ptr<BaseComponentArray>> m_componentArrays;
@@ -89,7 +89,7 @@ std::vector<Entity> ComponentManager::getEntitiesWith() {
 }
 
 template<typename COMPONENT_TYPE>
-std::expected<COMPONENT_TYPE, ComponentLookupError> ComponentManager::getComponent(const Entity entity) {
+std::expected<COMPONENT_TYPE *, ComponentLookupError> ComponentManager::getComponent(const Entity entity) {
     auto it = m_componentArrays.find(typeid(COMPONENT_TYPE));
 
     if (it == m_componentArrays.cend())
@@ -106,7 +106,7 @@ std::expected<COMPONENT_TYPE, ComponentLookupError> ComponentManager::getCompone
         return std::unexpected{ComponentLookupError::ComponentTypeNotRegistered};
     
     size_t index = std::distance(entities.begin(), entityIt);
-    return array->components()[index];
+    return &array->components()[index];
 }
 
 }

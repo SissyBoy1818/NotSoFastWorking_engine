@@ -25,8 +25,12 @@ public:
 
     void gameLoop();
 
+    void addLevel(std::shared_ptr<Level> &level);
+
+    render::Renderer & getRenderer();
+
 private:
-    std::vector<Level> m_levels;
+    std::vector<std::shared_ptr<Level>> m_levels;
     render::Renderer m_renderer;
 
     bool m_isRunning = true;

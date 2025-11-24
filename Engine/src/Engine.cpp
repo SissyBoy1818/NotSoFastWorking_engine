@@ -3,10 +3,13 @@
 #include "EventTranslator.h"
 #include "raylib.h"
 
+#include <print>
+
 namespace nsfw::core {
 
 Engine::Engine(const EngineConfig &config) {
     InitWindow(config.width, config.height, config.title.c_str());
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
 }
 
 Engine::~Engine() = default;
@@ -23,19 +26,24 @@ void Engine::pause() {
 
 void Engine::gameLoop() {
     while (m_isRunning) {
-
-        // Handle input
-        EventTranslator::checkEvents([this](Event& e) -> bool {
-                                         return this->handleEvent(e);
-                                     });
+        EventTranslator::checkEvents([this](Event& e) -> bool
+            {return this->handleEvent(e); });
 
         updateTimers();
 
         for (auto &level : m_levels)
-            level.update(m_deltaTime);
+            level->update(m_deltaTime);
 
         m_renderer.renderAll();
     }
+}
+
+void Engine::addLevel(std::shared_ptr<Level> &level) {
+    m_levels.push_back(level);
+}
+
+render::Renderer & Engine::getRenderer() {
+    return m_renderer;
 }
 
 void Engine::updateTimers() {
@@ -46,14 +54,16 @@ void Engine::updateTimers() {
 
 bool Engine::handleEvent(Event &e) {
     EventDispatcher  dispatcher(e);
-    dispatcher.dispatch<WindowCloseEvent>([](WindowCloseEvent &) {
+    dispatcher.dispatch<WindowCloseEvent>([this](WindowCloseEvent &) {
+            this->pause();
+            std::println("Window closed");
             CloseWindow();
             return true;
         });
 
 
     for (auto &level : m_levels)
-        level.onEvent(e);
+        level->onEvent(e);
 
     return false;
 }

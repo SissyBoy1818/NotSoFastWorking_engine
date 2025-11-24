@@ -73,6 +73,7 @@ set(ECS_SOURCES
         ECS/Systems/DrawableSystem.h
         ECS/Systems/ZoomingSystem.h
         ECS/include/Entity.h
+        ECS/Systems/CameraSystem.h
 )
 
 set(ENGINE_SOURCES
@@ -92,6 +93,7 @@ add_executable(${PROJECT_NAME} main.cpp
         ${RENDERER_SOURCES}
         ${ECS_SOURCES}
         ${ENGINE_SOURCES}
+        Example/Test.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

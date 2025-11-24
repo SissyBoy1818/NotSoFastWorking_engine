@@ -27,19 +27,33 @@ void EventTranslator::checkEvents(HandlerFn handler) {
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-        MousePressedEvent e(MOUSE_BUTTON_RIGHT);
+        MousePressedEvent e(MOUSE_BUTTON_RIGHT, GetMousePosition());
         handler(e);
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        MousePressedEvent e(MOUSE_BUTTON_LEFT);
+        MousePressedEvent e(MOUSE_BUTTON_LEFT, GetMousePosition());
         handler(e);
     }
 
-    if (GetMouseDelta().x != 0 || GetMouseDelta().y != 0) {
-        MouseMovedEvent e(GetMouseDelta());
+    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
+        MouseReleasedEvent e(MOUSE_BUTTON_RIGHT);
         handler(e);
     }
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+        MouseReleasedEvent e(MOUSE_BUTTON_LEFT);
+        handler(e);
+    }
+
+    static utils::Vector2f lastMousePos = GetMousePosition();
+    utils::Vector2f currentPos = GetMousePosition();
+    if (currentPos.x != lastMousePos.x || currentPos.y != lastMousePos.y) {
+        MouseMovedEvent e(currentPos);
+        handler(e);
+        lastMousePos = currentPos;
+    }
+
 
     if (GetMouseWheelMove() != 0) {
         MouseScrolledEvent e(GetMouseWheelMove());

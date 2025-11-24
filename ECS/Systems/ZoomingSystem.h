@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Event.h"
 #include "System.h"
+#include "InputEvents.h"
 #include "CoreComponents.h"
 
 namespace nsfw::ecs {
@@ -10,15 +12,21 @@ public:
     ZoomingSystem() = default;
     ~ZoomingSystem() override = default;
 
-    void FrameUpdate(ComponentManager &cm, float dt) override;
-    void TickUpdate(ComponentManager &cm, float dt) override;
+    void OnEvent(ComponentManager &cm, core::Event &e) override;
 
 private:
-    void ProcessZoom(Transform &transform, ZoomableCamera &zoom);
+    bool onMouseScroll(ComponentManager &cm, core::MouseScrolledEvent &e);
+    void ProcessZoom(Transform &transform, ZoomableCamera &zoom,  float wheelMove);
 };
 
+inline void ZoomingSystem::OnEvent(ComponentManager &cm, core::Event &e) {
+    core::EventDispatcher dispatcher(e);
 
-inline void ZoomingSystem::FrameUpdate(ComponentManager &cm, float dt) {
+    dispatcher.dispatch<core::MouseScrolledEvent>([&](core::MouseScrolledEvent &mouseEvent)
+        { return onMouseScroll(cm, mouseEvent); });
+}
+
+inline bool ZoomingSystem::onMouseScroll(ComponentManager &cm, core::MouseScrolledEvent &e) {
     for (auto entity : cm.getEntitiesWith<ZoomableCamera, Transform>()) {
         auto transform = cm.getComponent<Transform>(entity);
         auto zoom = cm.getComponent<ZoomableCamera>(entity);
@@ -26,28 +34,22 @@ inline void ZoomingSystem::FrameUpdate(ComponentManager &cm, float dt) {
         if (!zoom.has_value() || !transform.has_value())
             continue;
 
-        ProcessZoom(*transform, *zoom);
+        ProcessZoom(*transform.value(), *zoom.value(), e.getScroll());
+        return true;
     }
+    return false;
 }
 
-inline void ZoomingSystem::TickUpdate(ComponentManager &cm, float dt) {
-
-}
-
-inline void ZoomingSystem::ProcessZoom(Transform &transform, ZoomableCamera &zoom) {
-    const auto wheelMove = GetMouseWheelMove();
-    if (wheelMove == 0)
-        return;
-
+inline void ZoomingSystem::ProcessZoom(Transform &transform, ZoomableCamera &zoom, const float wheelMove) {
     const utils::Vector2f mousePosition{GetMousePosition()};
     const auto oldWorldMousePosition = render::CameraToWorldPosition(transform, mousePosition);
     const auto oldPosition = transform.rectangle.position;
     const auto oldScale = transform.scale;
 
     if (wheelMove > 0)
-        transform.scale = oldScale + zoom.delta;
+        transform.scale = std::min(oldScale + zoom.delta, zoom.maxZoom);
     else
-        transform.scale = oldScale - zoom.delta;
+        transform.scale = std::max(oldScale - zoom.delta, zoom.minZoom);
 
     const auto newWorldMousePosition = render::CameraToWorldPosition(transform, mousePosition);
     auto offset = oldWorldMousePosition - newWorldMousePosition;

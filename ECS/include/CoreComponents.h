@@ -17,14 +17,18 @@ struct PanningCamera {
 };
 
 struct ZoomableCamera {
-    float minZoom;
-    float maxZoom;
+    float minZoom = 0.1f;
+    float maxZoom = 5.0f;
 
-    float delta;
+    float delta = 0.05f;
 };
 
 struct Drawable {
     TextureID texture;
+};
+
+struct CameraComponent {
+    bool isActive = true;
 };
 
 }
@@ -55,10 +59,9 @@ inline utils::Vector2f CameraToWorldPosition(const ecs::Transform &cameraTransfo
 inline utils::Vector2f WorldToCameraPosition(const ecs::Transform &cameraTransform,
                                              const utils::Vector2f point) {
     const auto position = cameraTransform.rectangle.position;
-    const auto scale = cameraTransform.scale;
 
-    return {(point.x - position.x) * scale,
-            (point.y - position.y) * scale};
+    return {(point.x - position.x) * cameraTransform.scale,
+            (point.y - position.y) * cameraTransform.scale};
 }
 
 }

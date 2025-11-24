@@ -8,9 +8,12 @@ namespace nsfw::core {
 
 class MousePressedEvent final : public Event {
 public:
-    explicit MousePressedEvent(const int button) : m_mouseButton(button) {};
+    explicit MousePressedEvent(const int button, utils::Vector2f position)
+        : m_mouseButton(button)
+        , m_mousePosition(position) {};
 
     [[nodiscard]] int getMouseButton() const { return m_mouseButton; };
+    [[nodiscard]] utils::Vector2f getPosition() const { return m_mousePosition; }
 
     [[nodiscard]] std::string toString() const override { return std::format("MousePressedEvent: {}", m_mouseButton); }
 
@@ -18,6 +21,7 @@ public:
 
 private:
     int m_mouseButton;
+    utils::Vector2f  m_mousePosition;
 };
 
 class MouseReleasedEvent final : public Event {
@@ -57,6 +61,8 @@ public:
     [[nodiscard]] std::string toString() const override {
         return std::format("MouseScrolledEvent: {}", m_scroll);
     }
+
+    [[nodiscard]] float getScroll() const { return m_scroll; }
 
     EVENT_CLASS_TYPE(MouseScrolled)
 

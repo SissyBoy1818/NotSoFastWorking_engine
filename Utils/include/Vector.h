@@ -32,10 +32,11 @@ public:
     void operator-=(const Vector2<T> &rhs);
 
     /// Умножение вектора на число
-    auto operator*(auto rhs) const;
+    template <typename Rhs> requires std::is_arithmetic_v<T>
+    auto operator*(const Rhs rhs) const;
     /// Деление вектора на число
     template <typename Rhs> requires std::is_arithmetic_v<T>
-    auto operator/(Rhs rhs) const;
+    auto operator/(const Rhs rhs) const;
 
     /// Скалярное произведение векторов
     template<class U> requires std::is_arithmetic_v<T>
@@ -89,13 +90,14 @@ Vector2<T> Vector2<T>::operator-(const Vector2<T> &rhs) const {
 }
 
 template<class T> requires std::is_arithmetic_v<T>
-auto Vector2<T>::operator*(auto rhs) const {
+template <typename Rhs> requires std::is_arithmetic_v<T>
+auto Vector2<T>::operator*(const Rhs rhs) const {
     return Vector2{x*rhs, y*rhs};
 }
 
 template<class T> requires std::is_arithmetic_v<T>
 template <typename Rhs> requires std::is_arithmetic_v<T>
-auto Vector2<T>::operator/(Rhs rhs) const {
+auto Vector2<T>::operator/(const Rhs rhs) const {
     constexpr auto epsilon = 1e-6;
     if (abs(rhs) < epsilon)
         throw std::exception{"Division by zero"};

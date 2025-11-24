@@ -21,6 +21,8 @@ public:
         return std::format("WindowResizedEvent: {}, {}", m_windowSize.x, m_windowSize.y);
     }
 
+    [[nodiscard]] utils::Vector2i getSize() const { return m_windowSize; }
+
     EVENT_CLASS_TYPE(WindowResize)
 
 private:

@@ -26,7 +26,7 @@ private:
 
 template<std::derived_from<System> SYSTEM_TYPE, typename ... Args>
 void SystemManager::registerSystem(Args &&...args) {
-    m_systems[typeid(SYSTEM_TYPE)] = std::make_shared<System>(std::forward<Args>(args)...);
+    m_systems[typeid(SYSTEM_TYPE)] = std::make_shared<SYSTEM_TYPE>(std::forward<Args>(args)...);
 }
 
 template<std::derived_from<System> SYSTEM_TYPE>

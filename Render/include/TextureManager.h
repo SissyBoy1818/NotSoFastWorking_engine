@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "Entity.h"
 #include "raylib.h"
+#include "Vector.h"
 
 namespace nsfw::render {
 
@@ -18,7 +19,7 @@ public:
     TextureManager();
     ~TextureManager();
 
-    TextureID loadTexture(const std::string &filePath);
+    TextureID loadTexture(const std::string &filePath, utils::Vector2f size);
     void unloadTexture(TextureID id);
     std::expected<Texture2D, TextureError> getTexture(TextureID id);
 

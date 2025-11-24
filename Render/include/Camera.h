@@ -26,7 +26,6 @@ public:
     /**
      * \brief Оператор для приведения камеры к типу, используемому в raylib
      */
-    explicit operator Camera2D() const;
 
 };
 
