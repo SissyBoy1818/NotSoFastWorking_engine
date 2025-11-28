@@ -12,7 +12,6 @@ public:
     ~DrawableSystem() override = default;
 
     void FrameUpdate(ComponentManager& cm, float dt) override;
-    void TickUpdate(ComponentManager& cm, float dt) override;
 
 private:
     render::Renderer &m_renderer;
@@ -31,7 +30,6 @@ inline void DrawableSystem::FrameUpdate(ComponentManager &cm, float dt) {
         return;
     const auto cameraTransform = *cameraExp.value();
 
-    // Вычисляем видимую область камеры в мировых координатах с учетом масштаба
     utils::Rectangle cameraViewRect;
     cameraViewRect.position = cameraTransform.rectangle.position;
     cameraViewRect.size = cameraTransform.rectangle.size / cameraTransform.scale;
@@ -50,10 +48,6 @@ inline void DrawableSystem::FrameUpdate(ComponentManager &cm, float dt) {
             m_renderer.addTask(transform.value()->rectangle.size, tr, *drawable.value());
         }
     }
-}
-
-inline void DrawableSystem::TickUpdate(ComponentManager &cm, float dt) {
-
 }
 
 }

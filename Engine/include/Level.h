@@ -26,7 +26,11 @@ public:
 
     void update(float dt);
 
-    [[nodiscard]] ecs::EntityManager & getEntityManager();
+    [[nodiscard]] ecs::Entity createEntity();
+
+    void destroyEntity(ecs::Entity entity);
+
+    [[nodiscard]] bool isEntityValid(ecs::Entity entity) const;
 
     void onEvent(Event & event);
 

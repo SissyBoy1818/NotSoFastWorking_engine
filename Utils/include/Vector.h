@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 #include <exception>
 #include "raylib.h"
@@ -52,6 +53,8 @@ public:
     [[nodiscard]] Vector2<float> normalized() const;
     /// Метод для получения длины вектора
     [[nodiscard]] float length() const;
+
+    void rotate(float angle);
 };
 
 using Vector2i = Vector2<int>;
@@ -135,6 +138,15 @@ Vector2<float> Vector2<T>::normalized() const {
 template<class T> requires std::is_arithmetic_v<T>
 float Vector2<T>::length() const {
     return sqrt(x*x + y*y);
+}
+
+template<class T> requires std::is_arithmetic_v<T>
+void Vector2<T>::rotate(const float angle) {
+    T newX = x * std::cos(angle/180.0 * PI) - y * std::sin(angle/180 * PI);
+    T newY = x * std::sin(angle/180.0 * PI) - y * std::cos(angle/180 * PI);
+
+    x = newX;
+    y = newY;
 }
 
 }

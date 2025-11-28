@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include <algorithm>
+
 #include "raylib.h"
 
 namespace nsfw::render {
@@ -23,16 +25,22 @@ void Renderer::addTask(const utils::Vector2f origSize, const ecs::Transform &tra
 void Renderer::renderAll() {
     if (WindowShouldClose()) return;
 
+    std::ranges::sort(m_renderQueue, [](const RenderTask &lhs, const RenderTask &rhs) -> bool
+                      { return lhs.position.y < rhs.position.y; });
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    for (const auto &[originalSize, position, size, rotation, scale, textureID] : m_renderQueue)
+    for (const auto &[originalSize, position, size, rotation, scale, textureID] : m_renderQueue) {
         DrawTexturePro(*m_textureManager.getTexture(textureID),
                         {0,0, originalSize.x, originalSize.y},
-                        {position.x, position.y, size.x, size.y},
+                        {position.x+size.x/2, position.y+size.y/2, size.x, size.y},
                         {size.x/2, size.y/2},
                         rotation,
                         {255,255,255,255});
+        // debug borders
+        DrawRectangleLines(position.x, position.y, size.x, size.y, BLACK);
+    }
 
     DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 15, DARKGRAY);
 

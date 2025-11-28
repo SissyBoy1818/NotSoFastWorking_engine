@@ -14,8 +14,16 @@ void Level::update(float dt) {
     }
 }
 
-ecs::EntityManager & Level::getEntityManager() {
-    return m_entityManager;
+ecs::Entity Level::createEntity() {
+    return m_entityManager.create();
+}
+
+void Level::destroyEntity(ecs::Entity entity) {
+    m_entityManager.destroy(entity);
+}
+
+bool Level::isEntityValid(ecs::Entity entity) const {
+    return m_entityManager.isAlive(entity);
 }
 
 void Level::onEvent(Event &event) {
